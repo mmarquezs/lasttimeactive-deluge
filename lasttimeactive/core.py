@@ -43,6 +43,7 @@ from deluge.plugins.pluginbase import CorePluginBase
 import deluge.component as component
 import deluge.configmanager
 from deluge.core.rpcserver import export
+import deluge.common as common
 
 DEFAULT_PREFS = {
     "test":"NiNiNi"
@@ -65,13 +66,13 @@ class Core(CorePluginBase):
     def update_stats(self):
         self.torrents = component.get("Core").get_torrents_status({},[])
         for torrent_id in self.torrents.keys():
-            print torrent_id
+            # print torrent_id
             time_since_upload = component.get("Core").torrentmanager[torrent_id].handle.status().time_since_upload
             time_since_download = component.get("Core").torrentmanager[torrent_id].handle.status().time_since_download
-            print "Time since upload: ",time_since_upload
-            print "Time since download: ",time_since_download
+            # print "Time since upload: ",time_since_upload
+            # print "Time since download: ",time_since_download
             self.torrents_status[torrent_id]={"time_since_upload" : time_since_upload, "time_since_download" : time_since_download}
-        print self.torrents_status
+        # print self.torrents_status
 
     @export
     def set_config(self, config):
@@ -86,11 +87,13 @@ class Core(CorePluginBase):
         return self.config.config
 
     def get_torrent_download_status(self, torrent_id):
-        response = str(self.torrents_status[torrent_id]["time_since_upload"])
-        print response
+        # response = str(self.torrents_status[torrent_id]["time_since_upload"])
+        response = common.ftime(self.torrents_status[torrent_id]["time_since_upload"])
+        # print response
         return response or ""
 
     def get_torrent_upload_status(self, torrent_id):
-        response = str(self.torrents_status[torrent_id]["time_since_download"])
-        print response
+        # response = str(self.torrents_status[torrent_id]["time_since_download"])
+        response = common.ftime(self.torrents_status[torrent_id]["time_since_download"])
+        # print response
         return response or ""

@@ -44,21 +44,11 @@ from deluge.ui.client import client
 from deluge.plugins.pluginbase import GtkPluginBase
 import deluge.component as component
 import deluge.common
-
+import deluge.ui.gtkui.listview as listview
 from common import get_resource
 
 # def cell_data_label(column, cell, model, row, data):
 #     cell.set_property('text', str(model.get_value(row, data)))
-
-def cell_data_time(column, cell, model, row, data):
-    """Display value as time, eg 1m10s"""
-    time = model.get_value(row, data)
-    if time <= 0:
-        time_str = ""
-    else:
-        time_str = deluge.common.ftime(time)
-    cell.set_property('text', time_str)
-
 class GtkUI(GtkPluginBase):
     def enable(self):
         self.glade = gtk.glade.XML(get_resource("config.glade"))
@@ -67,9 +57,10 @@ class GtkUI(GtkPluginBase):
         component.get("PluginManager").register_hook("on_apply_prefs", self.on_apply_prefs)
         component.get("PluginManager").register_hook("on_show_prefs", self.on_show_prefs)
         view = deluge.component.get("TorrentView")
-        view.add_func_column(_("Time since Uploading"),cell_data_time,"text", status_field=["time_since_upload"])
-        view.add_func_column(_("Time since Downloading"),cell_data_time,"text", status_field=["time_since_download"])
-        # view.add_text_column(_("Time since Downloading"), status_field=["time_since_download"])
+        # view.add_func_column(_("Time since Uploading"),listview.cell_data_time,[int], status_field=["time_since_upload"])
+        # view.add_func_column(_("Time since Downloading"),listview.cell_data_time,[int], status_field=["time_since_download"])
+        view.add_text_column(_("Time since Downloading"), status_field=["time_since_download"])
+        view.add_text_column(_("Time since Uploading"), status_field=["time_since_upload"])
 
     def disable(self):
         component.get("Preferences").remove_page("lasttimeactive")
